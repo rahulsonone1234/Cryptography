@@ -1,0 +1,534 @@
+
+ https://hr.gs/walchand_veritas
+Saru12345
+saru
+saru
+system
+create table products(p_id number(10) NOT NULL,p_name varchar2(50)NOT NULL,p_stock number(10)NOT NULL ,p_price number(10) NOT NULL);
+insert into products(p_id,p_name,p_stock,p_price) values (1,'pen',133,145);
+create database db;
+
+create table products (product_id int,category varchar(3),details varchar(40),price_number int(10),stock_number int(5));
+create table test_table(record_number number(10) NOT NULL,current_date Date);
+
+
+create table test_table(recordNumber Number(3), currentDate Date);
+insert into test_table values(2,'10-12-2020');
+select * from test_table;
+drop table test_table;
+
+declare
+   ddate date := '10-12-2020';
+ begin
+    for i in 1 .. 50
+     loop
+         insert into test_table values ( i, ddate );
+         ddate := ddate + 1;
+     end loop;
+     commit;
+ end;
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+create or replace procedure modifyProducts(x IN OUT Number, y IN OUT char) IS
+BEGIN
+ update products1
+ set price_number = price_number + (x/100)*price_number where category = 'Y';
+END;
+
+
+
+Declare
+a number;
+ch char(3);
+Begin
+ a := 10;
+ ch := 'Y';
+ modifyProducts(a,ch);
+End;  
+
+select product_id from products1 where category = 'Y';
+select * from products1;
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+create or replace procedure modifyProducts(x IN OUT Number, y IN OUT varchar(20)) IS
+BEGIN
+ update products1
+ set price_number = price_number + (x/100)*price_number where category = y;
+END;
+Declare
+a number;
+ch varchar(20);
+Begin
+ a := 10;
+ ch := 'Food';
+ modifyProducts(a,ch);
+End;
+
+////////////@@@@@@@@@@@@@@@@@@@@@@@@@@@@?/////////////////
+assignment 3
+CREATE OR REPLACE TYPE name_type AS OBJECT
+(
+  name1 VARCHAR(50),
+  
+  MAP MEMBER FUNCTION countNoOfWords RETURN NUMBER
+)NOT FINAL;
+
+CREATE OR REPLACE TYPE BODY name_type AS
+  MAP MEMBER FUNCTION countNoOfWords RETURN NUMBER AS
+    cnt NUMBER := 0;
+    len NUMBER := 0;
+    str CHAR := '1';
+    curr NUMBER := 0;
+    BEGIN 
+      cnt := 0;
+      len := LENGTH(name1);
+      FOR i IN 1..len LOOP 
+        str := SUBSTR(name1, i, 1);
+        IF(str = ' ' OR str = '.' OR str = ',' OR str = '?') THEN 
+          IF(curr > 0) THEN 
+            cnt := cnt + 1;
+          END IF;
+          curr := 0;
+        ELSE
+          curr := curr + 1;
+        END IF;
+      END LOOP;
+      IF(curr > 0) THEN 
+        cnt := cnt + 1;
+      END IF;
+      return cnt;
+    END;
+  END;
+
+CREATE TABLE name_table OF name_type;
+
+INSERT INTO name_table VALUES('we are in the best hell');
+
+SELECT VALUE(Node).name1, VALUE(Node).countNoOfWords() From name_table Node ;
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+create or replace type address as object
+(
+    short_address varchar2(50),
+    city varchar2(20),
+    state varchar2(20),
+    pincode number(6),    
+    member function getAddress(key_val varchar) return number,
+    member function countNoOfWords(typ varchar) return number
+);
+
+create or replace type body address as
+     member function getAddress(key_val in varchar) return number as
+     no_word number(20) :=0;
+     s char :=' ';
+     str varchar(20):=' ';
+     flg number(1):=0;
+     j number(10) :=0;
+     k number(10) :=0;
+     begin
+        for i in 1..Length(short_address) Loop
+            s:= substr(short_address,i,1);
+            
+            if s = ' ' or s='.' or s=',' then
+                str:= substr(short_address,j,k);
+                j:= i+1;
+                k:=-1;
+                if str=key_val then
+                    DBMS_OUTPUT.PUT_LINE('Address :'||short_address);
+                    flg :=1;
+                    return flg;
+                end if;
+            end if; 
+            k:= k+1;
+        end loop;
+        return flg;
+    end;
+    
+     member function countNoOfWords(typ in varchar) return number as
+     no_word number(20) :=1;
+     s char;
+     len number(3):=0;
+     begin
+        if(typ='short_address') then 
+        for i in 1..Length(short_address) Loop
+            s:= substr(short_address,i,1);
+            if s = ' ' or s='.' or s=',' then
+                no_word := no_word +1;
+                DBMS_OUTPUT.PUT_LINE('Address :');                    
+            end if;
+        end loop;
+        
+        elsif(typ='city') then 
+        for i in 1..Length(city) Loop
+            s:= substr(city,i,1);
+            if s = ' ' or s='.' or s=',' then
+                no_word := no_word +1;
+                DBMS_OUTPUT.PUT_LINE('Address :');                    
+            end if;
+        end loop;
+        
+        else
+        for i in 1..Length(state) Loop
+            s:= substr(state,i,1);
+            if s = ' ' or s='.' or s=',' then
+                no_word := no_word +1;
+                DBMS_OUTPUT.PUT_LINE('Address :');                    
+            end if;
+        end loop;
+                
+        end if;
+        return no_word;
+    end;     
+end;    
+
+create table address_table of address;
+
+insert into address_table values('Murbad Road, Kalyan','Mumbai','Maharashtra',421301);
+insert into address_table values('Shantinagar, Ichalkaranji','Kolhapur','Maharashtra',416115);
+insert into address_table values('WCE, Vishrambag','Sangli','Maharashtra',416416);
+
+insert into address_table values()\select ad.short_address from address_table ad where value(ad).getAddress('Road')=1;
+
+select ad.city, value(ad).countNoOfWords('city')as wordCount from address_table ad;
+
+
+///////////////////////////////////////////////////////////////
+CREATE OR REPLACE TYPE course_type AS OBJECT
+(
+  course_id NUMBER,
+  description VARCHAR(50)
+);
+
+CREATE TABLE course_table OF course_type;
+
+INSERT INTO course_table VALUES(
+  course_type(1, 'data Structres')
+);
+INSERT INTO course_table VALUES(
+  course_type(2, 'Graph')
+);
+INSERT INTO course_table VALUES(
+  course_type(3, 'Nosql')
+);
+
+SELECT * FROM COURSE_TABLE;
+
+
+//////////////////////////////////////////////////////
+const amqp = require("amqplib");
+
+connect();
+async function connect() {
+
+    try {
+        const connection = await amqp.connect("amqp://localhost:5672")
+        const channel = await connection.createChannel();
+        const result = await channel.assertQueue("jobs");
+        
+        channel.consume("jobs", message => {
+            const input = JSON.parse(message.content.toString());
+            console.log(`Recieved job with input ${input.number}`)
+            //"7" == 7 true
+            //"7" === 7 false
+
+            if (input.number == 7 ) 
+                channel.ack(message);
+        })
+
+        console.log("Waiting for messages...")
+    
+    }
+    catch (ex){
+        console.error(ex)
+    }
+
+}////////////////////
+\
+const amqp = require("amqplib");
+
+const msg = {number: process.argv[2]}
+connect();
+async function connect() {
+
+    try {
+        const connection = await amqp.connect("amqp://localhost:5672")
+        const channel = await connection.createChannel();
+        const result = await channel.assertQueue("jobs");
+        channel.sendToQueue("jobs", Buffer.from(JSON.stringify(msg)))
+        console.log(`Job sent successfully ${msg.number}`);
+    }
+    catch (ex){
+        console.error(ex)
+    }
+
+}
+//////////////////////////////////////////////////////////
+
+#include<bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    string s;
+    string out;
+    getline(cin, s);
+    for(int i=0;i<s.length();i++)
+    {
+        out.append(to_string(s[i]-'\0'));
+    }
+    cout<<out<<endl;
+    return 0;
+}
+
+#include<bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    string s;
+    cin>>s;
+    string out;
+    int j=0;
+    for(int i=0;i<s.length();i++)
+    {
+        if(s[i]==1)
+        {
+            int a=((s[i]-48)*100)+((s[i+1]-48)*10)+((s[i+2]-48));
+            char b=a;
+            out.push_back(b);
+            i=i+2;
+        }
+        else
+      
+
+
+
+
+#include<bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    
+    string input; //Take the input string from user to Encrypt
+    getline(cin, input); //getline is function takes string along with space
+    int key; //Take input key by which the letters should be shifted
+    cin>>key;
+    key=key%26;//To limit the in range upto 26 i.e. 0 to 25
+    //key=26-key;//To Move to the Left (if we need to shift right then comment this line)
+	string result;//String Result used to store the Encrypted Result
+	
+	for(int i=0;i<input.length();i++)
+	{
+		if(isupper(input[i]))//check if uppercase add key and then encrypt and append to result
+    		{
+			    int a=((input[i]+key-65)%26 +65);
+			    char b=a;
+			    result+=b;
+			}
+		else if(islower(input[i]))//check if lowercase add key and then encrypt and append to result
+		  {
+		    int a=((input[i]+key-97)%26 +97);
+		    char b=a;
+		    result+=b;
+		  }
+		    
+	}
+	cout<<result<<endl;
+}
+//////////////////////////////////////////////////////////
+#include<bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    
+    string input; //Take the input string from user to Decrypt
+    getline(cin, input); //getline is function takes string along with space
+    int key; //Take input key by which the letters should be shifted
+    cin>>key;
+    key=key%26;//To limit the in range upto 26 i.e. 0 to 25
+   // key=26-key;//To Move to the Left (if we need to shift right then comment this line)
+	string result;//String Result used to store the Decrypted Result
+	
+	for(int i=0;i<input.length();i++)
+	{
+		if(isupper(input[i]))//check if uppercase subtract key and then encrypt and append to result
+    		{
+			    int a=((input[i]-key-65)%26 +65);
+			    char b=a;
+			    result+=b;
+			}
+		else if(islower(input[i]))//check if lowercase subtract key and then encrypt and append to result
+		  {
+		    int a=((input[i]-key-97)%26 +97);
+		    char b=a;
+		    result+=b;
+		  }
+		    
+	}
+	cout<<result<<endl;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#include<bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    string input;
+    string result;
+    getline(cin, input);//Take the input string
+    int key;
+    cin>>key;//Take the key to encrypt
+    for(int i=0;i<input.length();i++)
+    {
+        result.append(to_string(input[i]-'\0'+key));//add key and store result in result string
+    }
+    cout<<result<<endl;
+    return 0;
+}
+///////////////////////////////////////////////////////////////////
+#include<bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    string input;
+    getline(cin, input);//Take input string
+    string result;
+    int key;
+    cin>>key;//Take a key
+    int j=0;
+    for(int i=0;i<input.length();i++)
+    {
+        if(input[i]==1)
+        {
+            int a=((input[i]-48)*100)+((input[i+1]-48)*10)+((input[i+2]-48));
+            a=a-key;//subtract a key to decrypt
+            char b=a;
+            result.push_back(b);
+            i=i+2;
+        }
+        else
+        {
+            int a=((input[i]-48)*10)+((input[i+1]-48));
+            a=a-key;//subtract a key to decrypt;
+            char b=a;
+            result.push_back(b);
+            i=i+1;
+        }
+    }
+    cout<<result<<endl;
+    return 0;
+}  
+
+
+
+
+create table DIM_ITEM (
+	id_item int,
+    itemName char(20),
+    color char(20),
+    price real,
+    PRIMARY KEY (id_item)
+);
+create table DIM_Place(
+	id_place int,
+    shopName char(20),
+    city char(10),
+    country char(3),
+    PRIMARY KEY (id_place);
+);
+create table DIM_TIME (
+	id_time int,
+    realDate Date,
+    yearMonth char(8),
+  PRIMARY KEY (id_time)
+);
+ create table FACT_Sale(
+	id_sale char(5),
+    id_item int,
+    id_place int,
+    id_time int,
+    total real,
+    PRIMARY KEY (id_sale),
+    FOREIGN KEY(id_item) REFERENCES DIM_ITEM(id_item),
+    FOREIGN KEY(id_time) REFERENCES DIM_TIME(id_time),
+  FOREIGN KEY(id_place) REFERENCES DIM_PLACE(id_place)
+);
+INSERT INTO DIM_ITEM VALUES(111,'pen','Blue',50);
+INSERT INTO DIM_ITEM VALUES(112,'pencil','Grey',30);
+INSERT INTO DIM_ITEM VALUES(113,'book','White',350);
+INSERT INTO DIM_ITEM VALUES(114,'bag','Red',1000);
+INSERT INTO DIM_ITEM VALUES(115,'slate','Black',200);
+
+INSERT INTO DIM_TIME VALUES(111,'2020-09-01','2020-Sep');
+INSERT INTO DIM_TIME VALUES(112,'2020-08-02','2020-Aug');
+INSERT INTO DIM_TIME VALUES(113,'2020-05-03','2020-May');
+INSERT INTO DIM_TIME VALUES(114,'2020-05-23','2020-May');
+INSERT INTO DIM_TIME VALUES(115,'2020-09-10','2020-Sep');
+
+INSERT INTO DIM_PLACE VALUES(6001,'Gabada Toys','Yavatmal','IND');
+INSERT INTO DIM_PLACE VALUES(6002,'Shovu Toys','New York','USA');
+INSERT INTO DIM_PLACE VALUES(6003,'Yakimaka Toys','Tokyo','JAP');
+INSERT INTO DIM_PLACE VALUES(6004,'Ravan Toys','Yavatmal','SRI');
+INSERT INTO DIM_PLACE VALUES(6005,'Bravo Toys','Yavatmal','WI');
+
+INSERT INTO FACT_SALE VALUES('DEF',111,6001,113,12023);
+INSERT INTO FACT_SALE VALUES('ABD',112,6003,114,1023);
+INSERT INTO FACT_SALE VALUES('DEE',113,6004,115,9123);
+INSERT INTO FACT_SALE VALUES('AEF',113,6005,113,120);
+INSERT INTO FACT_SALE VALUES('AFI',113,6004,113,120);
+INSERT INTO FACT_SALE VALUES('AZI',112,6002,113,1202);
+INSERT INTO FACT_SALE VALUES('DEI',111,6001,111,1203);
+INSERT INTO FACT_SALE VALUES('DFL',111,6003,111,1202);
+INSERT INTO FACT_SALE VALUES('POF',114,6005,112,1203);
+INSERT INTO FACT_SALE VALUES('DEF',115,6003,113,12023);
+INSERT INTO FACT_SALE VALUES('ZZZ',115,6002,112,1003);
+INSERT INTO FACT_SALE VALUES('IUE',115,6001,111,12023);
+INSERT INTO FACT_SALE VALUES('MMM',112,6001,113,1203);
+INSERT INTO FACT_SALE VALUES('MNB',113,6002,111,12023);
+INSERT INTO FACT_SALE VALUES('BCB',112,6001,111,1203);
+INSERT INTO FACT_SALE VALUES('KJH',112,6002,112,12023);
+INSERT INTO FACT_SALE VALUES('BHU',111,6001,113,120323);
+INSERT INTO FACT_SALE VALUES('LLL',114,6002,114,1223);
+INSERT INTO FACT_SALE VALUES('GFG',115,6003,115,1203);
+INSERT INTO FACT_SALE VALUES('DEF',115,6005,111,12023);
+
+ select id_item, id_place, sum(total)
+from fact_sale  
+group by id_item, id_place with ROLLUP;
+
+ select itemName, shopName, sum(total)
+from dim_item, dim_place, fact_sale
+where dim_item.id_item = fact_sale.id_item and fact_sale.id_place = dim_place.id_place
+group by itemName, shopName with ROLLUP;
+
+<script data-ad-client="ca-pub-1758931851095569" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+
+MH202021002573782
+Saniya@1234
+
+MH202021002575483
+Avez@1234
+
+MH202021002576407
+Ayana@1234
